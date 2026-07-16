@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import { Provider } from "react-redux"
+import { store } from "@/store"
 
 const ibmPlexSans = IBM_Plex_Sans({
     subsets: ["latin"],
@@ -31,7 +33,9 @@ export default function RootLayout({
             )}
         >
             <body>
-                <ThemeProvider>{children}</ThemeProvider>
+                <Provider store={store}>
+                    <ThemeProvider>{children}</ThemeProvider>
+                </Provider>
             </body>
         </html>
     )
