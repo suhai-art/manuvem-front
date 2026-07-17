@@ -6,17 +6,20 @@ export type AuthUser = {
     id: string | number
     email: string
     name?: string
+    tenant: string
     [key: string]: unknown
 }
 
 type AuthState = {
     token: string | null
     user: AuthUser | null
+    hydrated: boolean
 }
 
 const initialState: AuthState = {
     token: null,
     user: null,
+    hydrated: false,
 }
 
 export function getStoredToken(): string | null {
@@ -50,6 +53,7 @@ const authSlice = createSlice({
         },
         hydrateAuth(state, action: PayloadAction<{ token: string | null }>) {
             state.token = action.payload.token
+            state.hydrated = true
         },
         logout(state) {
             state.token = null

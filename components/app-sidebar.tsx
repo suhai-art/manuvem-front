@@ -1,10 +1,13 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
+import { LogOutIcon, Factory } from "lucide-react"
 
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarHeader,
     SidebarMenu,
@@ -15,136 +18,12 @@ import {
     SidebarMenuSubItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon } from "lucide-react"
+import { useLogoutMutation } from "@/store/api/auth-api"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
 
-// This is sample data.
 const data = {
     navMain: [
-        // {
-        //     title: "Getting Started",
-        //     url: "#",
-        //     items: [
-        //         {
-        //             title: "Installation",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Project Structure",
-        //             url: "#",
-        //         },
-        //     ],
-        // },
-        // {
-        //     title: "Build Your Application",
-        //     url: "#",
-        //     items: [
-        //         {
-        //             title: "Routing",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Data Fetching",
-        //             url: "#",
-        //             isActive: true,
-        //         },
-        //         {
-        //             title: "Rendering",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Caching",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Styling",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Optimizing",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Configuring",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Testing",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Authentication",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Deploying",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Upgrading",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Examples",
-        //             url: "#",
-        //         },
-        //     ],
-        // },
-        // {
-        //     title: "API Reference",
-        //     url: "#",
-        //     items: [
-        //         {
-        //             title: "Components",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "File Conventions",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Functions",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "next.config.js Options",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "CLI",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Edge Runtime",
-        //             url: "#",
-        //         },
-        //     ],
-        // },
-        // {
-        //     title: "Architecture",
-        //     url: "#",
-        //     items: [
-        //         {
-        //             title: "Accessibility",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Fast Refresh",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Next.js Compiler",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Supported Browsers",
-        //             url: "#",
-        //         },
-        //         {
-        //             title: "Turbopack",
-        //             url: "#",
-        //         },
-        //     ],
-        // },
         {
             title: "Community",
             url: "#",
@@ -159,23 +38,31 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const router = useRouter()
+    const [logout, { isLoading }] = useLogoutMutation()
+    const tenant = useSelector((state: RootState) => state.auth.user.tenant)
+
+    async function handleLogout() {
+        try {
+            await logout().unwrap()
+        } catch {
+        } finally {
+            router.replace("/login")
+        }
+    }
+
     return (
         <Sidebar {...props}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <a href="#">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                    <GalleryVerticalEndIcon className="size-4" />
-                                </div>
-                                <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="font-medium">
-                                        Documentation
-                                    </span>
-                                    <span className="">v1.0.0</span>
-                                </div>
-                            </a>
+                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                <Factory className="size-4" />
+                            </div>
+                            <div className="flex flex-col gap-0.5 leading-none">
+                                <span className="font-medium">{tenant}</span>
+                            </div>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -213,6 +100,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton
+                            onClick={handleLogout}
+                            disabled={isLoading}
+                            tooltip="Sair"
+                        >
+                            <LogOutIcon />
+                            <span>{isLoading ? "Saindo..." : "Sair"}</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
             <SidebarRail />
         </Sidebar>
     )

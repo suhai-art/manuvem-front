@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google"
 
 import "./globals.css"
+import { AuthGuard } from "@/components/auth-guard"
 import { StoreProvider } from "@/components/store-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
@@ -33,7 +34,9 @@ export default function RootLayout({
         >
             <body>
                 <StoreProvider>
-                    <ThemeProvider>{children}</ThemeProvider>
+                    <ThemeProvider>
+                        <AuthGuard>{children}</AuthGuard>
+                    </ThemeProvider>
                 </StoreProvider>
             </body>
         </html>
