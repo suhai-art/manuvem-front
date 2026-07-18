@@ -57,11 +57,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                <Factory className="size-4" />
-                            </div>
-                            <div className="flex flex-col gap-0.5 leading-none">
-                                <span className="font-medium">{tenant}</span>
+                            <div>
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                    <Factory className="size-4" />
+                                </div>
+                                <div className="flex flex-col gap-0.5 leading-none">
+                                    <span className="font-medium">
+                                        {tenant}
+                                    </span>
+                                </div>
                             </div>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
