@@ -3,8 +3,20 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOutIcon, PackageIcon, Building2 } from "lucide-react"
+import {
+    LogOutIcon,
+    PackageIcon,
+    Building2,
+    Users,
+    ChevronDownIcon,
+    Settings,
+} from "lucide-react"
 
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import {
     Sidebar,
     SidebarContent,
@@ -104,6 +116,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
+                    <Collapsible className="group">
+                        <SidebarMenu>
+                            <SidebarMenuItem>
+                                <CollapsibleContent>
+                                    <SidebarMenu className="mt-1 ml-6">
+                                        {/* <SidebarMenuItem> */}
+                                        {/*     <SidebarMenuButton asChild> */}
+                                        {/*         <Link href="/settings/profile"> */}
+                                        {/*             <User /> */}
+                                        {/*             Perfil */}
+                                        {/*         </Link> */}
+                                        {/*     </SidebarMenuButton> */}
+                                        {/* </SidebarMenuItem> */}
+                                        {/**/}
+                                        {/* <SidebarMenuItem> */}
+                                        {/*     <SidebarMenuButton asChild> */}
+                                        {/*         <Link href="/settings/company"> */}
+                                        {/*             <Building2 /> */}
+                                        {/*             Empresa */}
+                                        {/*         </Link> */}
+                                        {/*     </SidebarMenuButton> */}
+                                        {/* </SidebarMenuItem> */}
+
+                                        <SidebarMenuItem>
+                                            <SidebarMenuButton asChild>
+                                                <Link href="/settings/access">
+                                                    <Users />
+                                                    Acessos
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    </SidebarMenu>
+                                </CollapsibleContent>
+
+                                <CollapsibleTrigger asChild>
+                                    <SidebarMenuButton>
+                                        <Settings />
+                                        <span>Configurações</span>
+                                        <ChevronDownIcon className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                                    </SidebarMenuButton>
+                                </CollapsibleTrigger>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </Collapsible>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             onClick={handleLogout}
