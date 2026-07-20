@@ -15,6 +15,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
+    useSidebar,
 } from "@/components/ui/sidebar"
 import { useLogoutMutation } from "@/store/api/auth-api"
 import { useSelector } from "react-redux"
@@ -34,6 +35,7 @@ const navItems = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { setOpenMobile } = useSidebar()
     const router = useRouter()
     const pathname = usePathname()
     const [logout, { isLoading }] = useLogoutMutation()
@@ -85,7 +87,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     }
                                     tooltip={item.title}
                                 >
-                                    <Link href={item.url}>
+                                    <Link
+                                        href={item.url}
+                                        onClick={() => {
+                                            setOpenMobile(false)
+                                        }}
+                                    >
                                         <item.icon />
                                         <span>{item.title}</span>
                                     </Link>
