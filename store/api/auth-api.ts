@@ -1,10 +1,6 @@
-import {
-    createApi,
-    fetchBaseQuery,
-    type BaseQueryFn,
-    type FetchArgs,
-    type FetchBaseQueryError,
-} from "@reduxjs/toolkit/query/react"
+import { createApi } from "@reduxjs/toolkit/query/react"
+import { baseQueryWithUnwrap } from "@/store/api/base-query"
+import { itemsApi } from "@/store/api/items-api"
 import {
     logout,
     setCredentials,
@@ -20,76 +16,6 @@ export type LoginRequest = {
 export type LoginResponse = {
     token: string
     user?: AuthUser
-}
-
-type ApiEnvelope<T = unknown> = {
-    data: T
-}
-
-type AuthAwareState = {
-    auth: { token: string | null }
-    tenant: { slug: string | null }
-}
-
-function getApiBaseUrl(tenant: string | null): string {
-    const protocol = process.env.NEXT_PUBLIC_API_PROTOCOL ?? "https"
-    const host = process.env.NEXT_PUBLIC_API_HOST ?? ""
-
-    if (!host) {
-        return ""
-    }
-
-    if (tenant) {
-        return `${protocol}://${tenant}.${host}`
-    }
-
-    return `${protocol}://${host}`
-}
-
-const rawBaseQuery: BaseQueryFn<
-    string | FetchArgs,
-    unknown,
-    FetchBaseQueryError
-> = async (args, api, extraOptions) => {
-    const state = api.getState() as AuthAwareState
-    const tenant = state.tenant.slug
-
-    return fetchBaseQuery({
-        baseUrl: getApiBaseUrl(tenant),
-        prepareHeaders: (headers) => {
-            const token = state.auth.token
-
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`)
-            }
-
-            headers.set("Accept", "application/json")
-            return headers
-        },
-    })(args, api, extraOptions)
-}
-
-const baseQueryWithUnwrap: BaseQueryFn<
-    string | FetchArgs,
-    unknown,
-    FetchBaseQueryError
-> = async (args, api, extraOptions) => {
-    const result = await rawBaseQuery(args, api, extraOptions)
-
-    if (result.error) {
-        return result
-    }
-
-    const payload = result.data
-
-    if (payload && typeof payload === "object" && "data" in payload) {
-        return {
-            ...result,
-            data: (payload as ApiEnvelope).data,
-        }
-    }
-
-    return result
 }
 
 export const authApi = createApi({
@@ -128,6 +54,7 @@ export const authApi = createApi({
                 } finally {
                     dispatch(logout())
                     dispatch(authApi.util.resetApiState())
+                    dispatch(itemsApi.util.resetApiState())
                 }
             },
         }),

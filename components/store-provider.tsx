@@ -14,10 +14,6 @@ function StoreBootstrap({ children }: { children: React.ReactNode }) {
         const hostname = window.location.hostname
         const slug = getTenantFromHostname(hostname)
 
-        console.log({
-            hostname,
-            slug,
-        })
         dispatch(
             setTenant({
                 slug,
@@ -25,6 +21,7 @@ function StoreBootstrap({ children }: { children: React.ReactNode }) {
             })
         )
         dispatch(hydrateAuth({ token: getStoredToken() }))
+        document.title = slug ? `${slug} | Manuvem` : "Manuvem"
     }, [dispatch])
 
     return children

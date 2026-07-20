@@ -1,4 +1,5 @@
-import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google"
+import { Geist_Mono, IBM_Plex_Sans } from "next/font/google"
+import type { Metadata } from "next"
 
 import "./globals.css"
 import { AuthGuard } from "@/components/auth-guard"
@@ -15,6 +16,13 @@ const fontMono = Geist_Mono({
     subsets: ["latin"],
     variable: "--font-mono",
 })
+
+export const metadata: Metadata = {
+    title: {
+        default: "Manuvem",
+        template: "%s | Manuvem",
+    },
+}
 
 export default function RootLayout({
     children,

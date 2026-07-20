@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
-import { LogOutIcon, Factory } from "lucide-react"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { LogOutIcon, Factory, PackageIcon } from "lucide-react"
 
 import {
     Sidebar,
@@ -13,34 +14,25 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { useLogoutMutation } from "@/store/api/auth-api"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 
-const data = {
-    navMain: [
-        {
-            title: "Community",
-            url: "#",
-            items: [
-                {
-                    title: "Contribution Guide",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-}
+const navItems = [
+    {
+        title: "Itens",
+        url: "/items",
+        icon: PackageIcon,
+    },
+]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const router = useRouter()
+    const pathname = usePathname()
     const [logout, { isLoading }] = useLogoutMutation()
-    const tenant = useSelector((state: RootState) => state.auth.user.tenant)
+    const tenant = useSelector((state: RootState) => state.auth.user?.tenant)
 
     async function handleLogout() {
         try {
@@ -57,16 +49,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <div>
+                            <Link href="/dashboard">
                                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                                     <Factory className="size-4" />
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-medium">
-                                        {tenant}
+                                        {tenant ?? "Indústria"}
                                     </span>
                                 </div>
-                            </div>
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -74,31 +66,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarMenu>
-                        {data.navMain.map((item) => (
+                        {navItems.map((item) => (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild>
-                                    <a href={item.url} className="font-medium">
-                                        {item.title}
-                                    </a>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={
+                                        pathname === item.url ||
+                                        pathname.startsWith(`${item.url}/`)
+                                    }
+                                    tooltip={item.title}
+                                >
+                                    <Link href={item.url}>
+                                        <item.icon />
+                                        <span>{item.title}</span>
+                                    </Link>
                                 </SidebarMenuButton>
-                                {item.items?.length ? (
-                                    <SidebarMenuSub>
-                                        {item.items.map((item) => (
-                                            <SidebarMenuSubItem
-                                                key={item.title}
-                                            >
-                                                <SidebarMenuSubButton
-                                                    asChild
-                                                    isActive={item.isActive}
-                                                >
-                                                    <a href={item.url}>
-                                                        {item.title}
-                                                    </a>
-                                                </SidebarMenuSubButton>
-                                            </SidebarMenuSubItem>
-                                        ))}
-                                    </SidebarMenuSub>
-                                ) : null}
                             </SidebarMenuItem>
                         ))}
                     </SidebarMenu>
