@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOutIcon, PackageIcon } from "lucide-react"
+import { LogOutIcon, PackageIcon, Building2 } from "lucide-react"
 
 import {
     Sidebar,
@@ -25,6 +25,11 @@ const navItems = [
         title: "Itens",
         url: "/items",
         icon: PackageIcon,
+    },
+    {
+        title: "Clientes",
+        url: "/clients",
+        icon: Building2,
     },
 ]
 

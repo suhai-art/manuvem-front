@@ -9,8 +9,8 @@ import {
     Trash2Icon,
 } from "lucide-react"
 
-import { DeleteItemDialog } from "@/components/items/delete-item-dialog"
-import { ItemFormDialog } from "@/components/items/item-form-dialog"
+import { DeleteClientDialog } from "@/components/clients/delete-client-dialog"
+import { ClientFormDialog } from "@/components/clients/client-form-dialog"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -28,22 +28,23 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { formatCurrency } from "@/lib/api-error"
-import { useFindItemsQuery, type Item } from "@/store/api/items-api"
+import { useFindClientsQuery, type Client } from "@/store/api/clients-api"
 
-export function ItemsModule() {
+export function ClientssModule() {
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState("")
     const [query, setQuery] = useState("")
     const [formOpen, setFormOpen] = useState(false)
-    const [editingItem, setEditingItem] = useState<Item | null>(null)
-    const [deletingItem, setDeletingItem] = useState<Item | null>(null)
+    const [editingClient, setEditingClient] = useState<Client | null>(null)
+    const [deletingClient, setDeletingClient] = useState<Client | null>(null)
 
-    const { data, isLoading, isFetching, isError, error } = useFindItemsQuery({
-        page,
-        per_page: 15,
-        query: query || undefined,
-    })
+    const { data, isLoading, isFetching, isError, error } = useFindClientsQuery(
+        {
+            page,
+            per_page: 15,
+            query: query || undefined,
+        }
+    )
 
     useEffect(() => {
         const timeout = window.setTimeout(() => {
@@ -55,16 +56,16 @@ export function ItemsModule() {
     }, [searchInput])
 
     function openCreate() {
-        setEditingItem(null)
+        setEditingClient(null)
         setFormOpen(true)
     }
 
-    function openEdit(item: Item) {
-        setEditingItem(item)
+    function openEdit(client: Client) {
+        setEditingClient(client)
         setFormOpen(true)
     }
 
-    const items = data?.data ?? []
+    const clients = data?.data ?? []
     const meta = data?.meta
     const total = meta?.total ?? 0
     const lastPage = meta?.last_page ?? 1
@@ -78,15 +79,15 @@ export function ItemsModule() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-xl font-semibold tracking-tight">
-                        Itens
+                        Clientes
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Cadastre e gerencie os itens do catálogo.
+                        Cadastre e gerencie os clientes.
                     </p>
                 </div>
                 <Button onClick={openCreate}>
                     <PlusIcon data-icon="inline-start" />
-                    Novo item
+                    Novo cliente
                 </Button>
             </div>
 
@@ -95,7 +96,7 @@ export function ItemsModule() {
                 <Input
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Buscar por nome ou código..."
+                    placeholder="Buscar por nome ou documento..."
                     className="pl-7"
                 />
             </div>
@@ -104,14 +105,8 @@ export function ItemsModule() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Código</TableHead>
                             <TableHead>Nome</TableHead>
-                            <TableHead className="hidden md:table-cell">
-                                Descrição
-                            </TableHead>
-                            <TableHead className="text-right">
-                                Preço padrão
-                            </TableHead>
+                            <TableHead>Documento</TableHead>
                             <TableHead className="w-12">
                                 <span className="sr-only">Ações</span>
                             </TableHead>
@@ -127,12 +122,6 @@ export function ItemsModule() {
                                     <TableCell>
                                         <Skeleton className="h-4 w-36" />
                                     </TableCell>
-                                    <TableCell className="hidden md:table-cell">
-                                        <Skeleton className="h-4 w-48" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Skeleton className="ml-auto h-4 w-16" />
-                                    </TableCell>
                                     <TableCell>
                                         <Skeleton className="size-7" />
                                     </TableCell>
@@ -147,42 +136,34 @@ export function ItemsModule() {
                                     {error &&
                                     typeof error === "object" &&
                                     "status" in error
-                                        ? "Não foi possível carregar os itens."
-                                        : "Erro ao carregar os itens."}
+                                        ? "Não foi possível carregar os clientes."
+                                        : "Erro ao carregar os clientes."}
                                 </TableCell>
                             </TableRow>
-                        ) : items.length === 0 ? (
+                        ) : clients.length === 0 ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={5}
                                     className="h-24 text-center text-muted-foreground"
                                 >
                                     {query
-                                        ? "Nenhum item encontrado para a busca."
-                                        : "Nenhum item cadastrado ainda."}
+                                        ? "Nenhum cliente encontrado para a busca."
+                                        : "Nenhum cliente cadastrado ainda."}
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            items.map((item) => (
+                            clients.map((client) => (
                                 <TableRow
-                                    key={item.id}
+                                    key={client.id}
                                     className={
                                         isFetching ? "opacity-70" : undefined
                                     }
                                 >
-                                    <TableCell className="font-mono text-xs">
-                                        {item.internal_code}
-                                    </TableCell>
                                     <TableCell className="font-medium">
-                                        {item.name}
+                                        {client.name}
                                     </TableCell>
                                     <TableCell className="hidden max-w-xs truncate text-muted-foreground md:table-cell">
-                                        {item.description}
-                                    </TableCell>
-                                    <TableCell className="text-right tabular-nums">
-                                        {formatCurrency(
-                                            item.default_unit_price
-                                        )}
+                                        {client.document}
                                     </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
@@ -190,7 +171,7 @@ export function ItemsModule() {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    aria-label={`Ações de ${item.name}`}
+                                                    aria-label={`Ações de ${client.name}`}
                                                 >
                                                     <MoreHorizontalIcon />
                                                 </Button>
@@ -198,7 +179,7 @@ export function ItemsModule() {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        openEdit(item)
+                                                        openEdit(client)
                                                     }
                                                 >
                                                     <PencilIcon />
@@ -207,7 +188,9 @@ export function ItemsModule() {
                                                 <DropdownMenuItem
                                                     variant="destructive"
                                                     onClick={() =>
-                                                        setDeletingItem(item)
+                                                        setDeletingClient(
+                                                            client
+                                                        )
                                                     }
                                                 >
                                                     <Trash2Icon />
@@ -254,20 +237,20 @@ export function ItemsModule() {
                 </div>
             ) : null}
 
-            <ItemFormDialog
+            <ClientFormDialog
                 open={formOpen}
                 onOpenChange={(open) => {
                     setFormOpen(open)
-                    if (!open) setEditingItem(null)
+                    if (!open) setEditingClient(null)
                 }}
-                item={editingItem}
+                client={editingClient}
             />
 
-            <DeleteItemDialog
-                item={deletingItem}
-                open={Boolean(deletingItem)}
+            <DeleteClientDialog
+                client={deletingClient}
+                open={Boolean(deletingClient)}
                 onOpenChange={(open) => {
-                    if (!open) setDeletingItem(null)
+                    if (!open) setDeletingClient(null)
                 }}
             />
         </div>
