@@ -2,19 +2,17 @@
 
 import { Suspense } from "react"
 import { LoginForm } from "@/components/login-form"
-import { Factory } from "lucide-react"
 
 export default function LoginPage() {
     return (
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="flex flex-col gap-4 p-6 md:p-10">
                 <div className="flex justify-center gap-2 md:justify-start">
-                    {/* <a href="#" className="flex items-center gap-2 font-medium"> */}
-                    <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                        <Factory className="size-4" />
-                    </div>
-                    Manuvem
-                    {/* </a> */}
+                    <img
+                        src="/manuvem_fulllogo.png"
+                        alt="Manuvem"
+                        className="h-8 w-auto"
+                    />
                 </div>
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xs">

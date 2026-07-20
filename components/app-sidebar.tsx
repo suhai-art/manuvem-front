@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOutIcon, Factory, PackageIcon } from "lucide-react"
+import { LogOutIcon, PackageIcon } from "lucide-react"
 
 import {
     Sidebar,
@@ -50,8 +50,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/dashboard">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                    <Factory className="size-4" />
+                                <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg">
+                                    <img
+                                        src="/manuvem_icon.png"
+                                        alt="Manuvem"
+                                        className="size-8 object-cover"
+                                    />
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-medium">
