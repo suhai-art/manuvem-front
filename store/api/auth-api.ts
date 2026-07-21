@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryWithUnwrap } from "@/store/api/base-query"
 import { itemsApi } from "@/store/api/items-api"
+import { usersApi } from "@/store/api/users-api"
 import {
     logout,
     setCredentials,
@@ -55,6 +56,7 @@ export const authApi = createApi({
                     dispatch(logout())
                     dispatch(authApi.util.resetApiState())
                     dispatch(itemsApi.util.resetApiState())
+                    dispatch(usersApi.util.resetApiState())
                 }
             },
         }),

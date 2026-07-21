@@ -6,6 +6,8 @@ export type AuthUser = {
     id: string | number
     email: string
     name?: string
+    role?: string
+    status?: string
     tenant: string
     [key: string]: unknown
 }
