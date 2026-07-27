@@ -32,21 +32,25 @@ import {
 import { useLogoutMutation } from "@/store/api/auth-api"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
+import { usePermission } from "@/hooks/usePermissions"
 
 const navItems = [
     {
         title: "Itens",
         url: "/items",
         icon: PackageIcon,
+        permission: "item.view",
     },
     {
         title: "Clientes",
         url: "/clients",
         icon: Building2,
+        permission: "client.view",
     },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { can } = usePermission()
     const { setOpenMobile } = useSidebar()
     const router = useRouter()
     const pathname = usePathname()
@@ -61,6 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             router.replace("/login")
         }
     }
+    console.log("view user? " + can("user.view"))
 
     return (
         <Sidebar {...props}>
@@ -78,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-medium">
-                                        {tenant ?? "Indústria"}
+                                        {tenant ?? "Manuvem"}
                                     </span>
                                 </div>
                             </Link>
@@ -89,28 +94,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarMenu>
-                        {navItems.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={
-                                        pathname === item.url ||
-                                        pathname.startsWith(`${item.url}/`)
-                                    }
-                                    tooltip={item.title}
-                                >
-                                    <Link
-                                        href={item.url}
-                                        onClick={() => {
-                                            setOpenMobile(false)
-                                        }}
+                        {navItems
+                            .filter((item) => can(item.permission))
+                            .map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={
+                                            pathname === item.url ||
+                                            pathname.startsWith(`${item.url}/`)
+                                        }
+                                        tooltip={item.title}
                                     >
-                                        <item.icon />
-                                        <span>{item.title}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
+                                        <Link
+                                            href={item.url}
+                                            onClick={() => {
+                                                setOpenMobile(false)
+                                            }}
+                                        >
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
@@ -139,14 +146,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         {/*     </SidebarMenuButton> */}
                                         {/* </SidebarMenuItem> */}
 
-                                        <SidebarMenuItem>
-                                            <SidebarMenuButton asChild>
-                                                <Link href="/settings/access">
-                                                    <Users />
-                                                    Acessos
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
+                                        {can("user.view") && (
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href="/settings/access">
+                                                        <Users />
+                                                        Acessos
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        )}
                                     </SidebarMenu>
                                 </CollapsibleContent>
 

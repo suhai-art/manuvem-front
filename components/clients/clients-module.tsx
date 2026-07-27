@@ -29,8 +29,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useFindClientsQuery, type Client } from "@/store/api/clients-api"
+import { usePermission } from "@/hooks/usePermissions"
 
 export function ClientssModule() {
+    const { can } = usePermission()
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState("")
     const [query, setQuery] = useState("")
@@ -85,10 +87,12 @@ export function ClientssModule() {
                         Cadastre e gerencie os clientes.
                     </p>
                 </div>
-                <Button onClick={openCreate}>
-                    <PlusIcon data-icon="inline-start" />
-                    Novo cliente
-                </Button>
+                {can("client.create") && (
+                    <Button onClick={openCreate}>
+                        <PlusIcon data-icon="inline-start" />
+                        Novo cliente
+                    </Button>
+                )}
             </div>
 
             <div className="relative max-w-sm">
@@ -185,17 +189,19 @@ export function ClientssModule() {
                                                     <PencilIcon />
                                                     Editar
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    variant="destructive"
-                                                    onClick={() =>
-                                                        setDeletingClient(
-                                                            client
-                                                        )
-                                                    }
-                                                >
-                                                    <Trash2Icon />
-                                                    Remover
-                                                </DropdownMenuItem>
+                                                {can("client.delete") && (
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        onClick={() =>
+                                                            setDeletingClient(
+                                                                client
+                                                            )
+                                                        }
+                                                    >
+                                                        <Trash2Icon />
+                                                        Remover
+                                                    </DropdownMenuItem>
+                                                )}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
