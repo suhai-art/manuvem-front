@@ -9,9 +9,8 @@ import {
     Trash2Icon,
 } from "lucide-react"
 
-import { DeleteUserDialog } from "@/components/users/delete-user-dialog"
-import { UserFormDialog } from "@/components/users/user-form-dialog"
-import { Badge } from "@/components/ui/badge"
+import { DeleteRoleDialog } from "@/components/roles/delete-role-dialog"
+import { RoleFormDialog } from "@/components/roles/role-form-dialog"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -29,17 +28,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useFindUsersQuery, type User } from "@/store/api/users-api"
+import { useFindRolesQuery, type Role } from "@/store/api/roles-api"
+import { usePermission } from "@/hooks/usePermissions"
 
-export function UsersModule() {
+export function RolesModule() {
+    const { can } = usePermission()
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState("")
     const [query, setQuery] = useState("")
     const [formOpen, setFormOpen] = useState(false)
-    const [editingUser, setEditingUser] = useState<User | null>(null)
-    const [deletingUser, setDeletingUser] = useState<User | null>(null)
+    const [editingRole, setEditingRole] = useState<Role | null>(null)
+    const [deletingRole, setDeletingRole] = useState<Role | null>(null)
 
-    const { data, isLoading, isFetching, isError, error } = useFindUsersQuery({
+    const { data, isLoading, isFetching, isError, error } = useFindRolesQuery({
         page,
         per_page: 15,
         query: query || undefined,
@@ -55,16 +56,16 @@ export function UsersModule() {
     }, [searchInput])
 
     function openCreate() {
-        setEditingUser(null)
+        setEditingRole(null)
         setFormOpen(true)
     }
 
-    function openEdit(user: User) {
-        setEditingUser(user)
+    function openEdit(role: Role) {
+        setEditingRole(role)
         setFormOpen(true)
     }
 
-    const users = data?.data ?? []
+    const roles = data?.data ?? []
     const meta = data?.meta
     const total = meta?.total ?? 0
     const lastPage = meta?.last_page ?? 1
@@ -78,16 +79,18 @@ export function UsersModule() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-xl font-semibold tracking-tight">
-                        Acessos
+                        Perfis de acesso
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Gerencie os usuários e seus perfis de acesso.
+                        Gerencie os perfis e permissões disponíveis no sistema.
                     </p>
                 </div>
-                <Button onClick={openCreate}>
-                    <PlusIcon data-icon="inline-start" />
-                    Novo usuário
-                </Button>
+                {can("role.create") && (
+                    <Button onClick={openCreate}>
+                        <PlusIcon data-icon="inline-start" />
+                        Novo perfil
+                    </Button>
+                )}
             </div>
 
             <div className="relative max-w-sm">
@@ -95,7 +98,7 @@ export function UsersModule() {
                 <Input
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Buscar por nome ou email..."
+                    placeholder="Buscar por nome..."
                     className="pl-7"
                 />
             </div>
@@ -105,9 +108,7 @@ export function UsersModule() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Nome</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Perfil</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>Permissões</TableHead>
                             <TableHead className="w-12">
                                 <span className="sr-only">Ações</span>
                             </TableHead>
@@ -118,16 +119,13 @@ export function UsersModule() {
                             Array.from({ length: 5 }).map((_, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
+                                        <Skeleton className="h-4 w-32" />
+                                    </TableCell>
+                                    <TableCell>
                                         <Skeleton className="h-4 w-20" />
                                     </TableCell>
                                     <TableCell>
-                                        <Skeleton className="h-4 w-36" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Skeleton className="h-4 w-16" />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-4 w-24" />
                                     </TableCell>
                                     <TableCell>
                                         <Skeleton className="size-7" />
@@ -137,58 +135,40 @@ export function UsersModule() {
                         ) : isError ? (
                             <TableRow>
                                 <TableCell
-                                    colSpan={5}
+                                    colSpan={4}
                                     className="h-24 text-center text-destructive"
                                 >
                                     {error &&
                                     typeof error === "object" &&
                                     "status" in error
-                                        ? "Não foi possível carregar os usuários."
-                                        : "Erro ao carregar os usuários."}
+                                        ? "Não foi possível carregar os perfis."
+                                        : "Erro ao carregar os perfis."}
                                 </TableCell>
                             </TableRow>
-                        ) : users.length === 0 ? (
+                        ) : roles.length === 0 ? (
                             <TableRow>
                                 <TableCell
-                                    colSpan={5}
+                                    colSpan={4}
                                     className="h-24 text-center text-muted-foreground"
                                 >
                                     {query
-                                        ? "Nenhum usuário encontrado para a busca."
-                                        : "Nenhum usuário cadastrado ainda."}
+                                        ? "Nenhum perfil encontrado para a busca."
+                                        : "Nenhum perfil cadastrado ainda."}
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            users.map((user) => (
+                            roles.map((role) => (
                                 <TableRow
-                                    key={user.id}
+                                    key={role.id}
                                     className={
                                         isFetching ? "opacity-70" : undefined
                                     }
                                 >
                                     <TableCell className="font-medium">
-                                        {user.name}
-                                    </TableCell>
-                                    <TableCell className="hidden max-w-xs truncate text-muted-foreground md:table-cell">
-                                        {user.email}
+                                        {role.name}
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary">
-                                            {user.roles[0]}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={
-                                                user.status === "active"
-                                                    ? "default"
-                                                    : "outline"
-                                            }
-                                        >
-                                            {user.status === "active"
-                                                ? "Ativo"
-                                                : "Inativo"}
-                                        </Badge>
+                                        {role.permissions.length}
                                     </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
@@ -196,7 +176,7 @@ export function UsersModule() {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    aria-label={`Ações de ${user.name}`}
+                                                    aria-label={`Ações de ${role.name}`}
                                                 >
                                                     <MoreHorizontalIcon />
                                                 </Button>
@@ -204,21 +184,25 @@ export function UsersModule() {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        openEdit(user)
+                                                        openEdit(role)
                                                     }
                                                 >
                                                     <PencilIcon />
                                                     Editar
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    variant="destructive"
-                                                    onClick={() =>
-                                                        setDeletingUser(user)
-                                                    }
-                                                >
-                                                    <Trash2Icon />
-                                                    Remover
-                                                </DropdownMenuItem>
+                                                {can("role.delete") && (
+                                                    <DropdownMenuItem
+                                                        variant="destructive"
+                                                        onClick={() =>
+                                                            setDeletingRole(
+                                                                role
+                                                            )
+                                                        }
+                                                    >
+                                                        <Trash2Icon />
+                                                        Remover
+                                                    </DropdownMenuItem>
+                                                )}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
@@ -260,20 +244,20 @@ export function UsersModule() {
                 </div>
             ) : null}
 
-            <UserFormDialog
+            <RoleFormDialog
                 open={formOpen}
                 onOpenChange={(open) => {
                     setFormOpen(open)
-                    if (!open) setEditingUser(null)
+                    if (!open) setEditingRole(null)
                 }}
-                user={editingUser}
+                role={editingRole}
             />
 
-            <DeleteUserDialog
-                user={deletingUser}
-                open={Boolean(deletingUser)}
+            <DeleteRoleDialog
+                role={deletingRole}
+                open={Boolean(deletingRole)}
                 onOpenChange={(open) => {
-                    if (!open) setDeletingUser(null)
+                    if (!open) setDeletingRole(null)
                 }}
             />
         </div>

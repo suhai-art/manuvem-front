@@ -19,7 +19,7 @@ export type UserPayload = {
     email: string
     password?: string
     password_confirmation?: string
-    role: number
+    roles: string[]
     status?: "active" | "inactive"
 }
 

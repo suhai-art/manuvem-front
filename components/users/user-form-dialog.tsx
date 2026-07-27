@@ -231,7 +231,7 @@ function UserFormFields({
                         id="role"
                         value={form.role}
                         onChange={(e) =>
-                            updateField("role", e.target.value as number)
+                            updateField("role", Number(e.target.value))
                         }
                         disabled={isLoading}
                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:outline-none disabled:cursor-not-allowed disabled:opacity-50"

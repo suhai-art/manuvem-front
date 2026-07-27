@@ -4,12 +4,13 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-    LogOutIcon,
-    PackageIcon,
     Building2,
-    Users,
     ChevronDownIcon,
     Settings,
+    ShieldCheck,
+    Users,
+    PackageIcon,
+    LogOutIcon,
 } from "lucide-react"
 
 import {
@@ -152,6 +153,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                     <Link href="/settings/access">
                                                         <Users />
                                                         Acessos
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        )}
+
+                                        {can("role.view") && (
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href="/settings/roles">
+                                                        <ShieldCheck />
+                                                        Perfis
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
