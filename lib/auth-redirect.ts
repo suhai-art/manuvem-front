@@ -1,6 +1,8 @@
-const DEFAULT_REDIRECT = "/dashboard"
+const DEFAULT_REDIRECT = "/"
 
-export function getSafeRedirect(value: string | null | undefined): string | null {
+export function getSafeRedirect(
+    value: string | null | undefined
+): string | null {
     if (!value) return null
 
     if (!value.startsWith("/") || value.startsWith("//")) {

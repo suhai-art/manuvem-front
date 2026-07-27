@@ -35,7 +35,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 import { usePermission } from "@/hooks/usePermissions"
 
-const navItems = [
+export const navItems = [
     {
         title: "Itens",
         url: "/items",

@@ -7,7 +7,6 @@ export function usePermission() {
     )
 
     function can(permission: string) {
-        console.log(permissions.includes("*"))
         if (permissions.includes("*")) {
             return true
         }

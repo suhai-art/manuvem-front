@@ -1,9 +1,5 @@
-"use client"
-
-import { useAppSelector } from "@/store/hooks"
+import HomeModule from "@/components/home/home-module"
 
 export default function Page() {
-    const { slug } = useAppSelector((state) => state.tenant)
-
-    return <div className="grid auto-rows-min gap-4 md:grid-cols-3">{slug}</div>
+    return <HomeModule />
 }
