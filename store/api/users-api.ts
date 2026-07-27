@@ -4,11 +4,13 @@ import {
     type PaginatedPayload,
 } from "@/store/api/base-query"
 
+import { Role } from "@/store/api/roles-api"
+
 export type User = {
     id: string
     name: string
     email: string
-    role: "admin" | "user"
+    role: number
     status: "active" | "inactive"
 }
 
@@ -17,7 +19,7 @@ export type UserPayload = {
     email: string
     password?: string
     password_confirmation?: string
-    role?: "admin" | "user"
+    role: number
     status?: "active" | "inactive"
 }
 
@@ -25,6 +27,10 @@ export type FindUsersParams = {
     page?: number
     per_page?: number
     query?: string
+}
+
+export type FormOptions = {
+    roles: Role[]
 }
 
 export type PaginatedUsers = PaginatedPayload<User>
@@ -69,10 +75,7 @@ export const usersApi = createApi({
             invalidatesTags: [{ type: "Users", id: "LIST" }],
         }),
 
-        updateUser: builder.mutation<
-            User,
-            { id: string; body: UserPayload }
-        >({
+        updateUser: builder.mutation<User, { id: string; body: UserPayload }>({
             query: ({ id, body }) => ({
                 url: `/api/users/${id}`,
                 method: "PUT",
@@ -105,6 +108,13 @@ export const usersApi = createApi({
                 { type: "User", id },
             ],
         }),
+
+        formOptions: builder.query<FormOptions, void>({
+            query: () => ({
+                url: "/api/users/form-options",
+                method: "GET",
+            }),
+        }),
     }),
 })
 
@@ -116,4 +126,5 @@ export const {
     useUpdateUserMutation,
     useToggleUserActiveMutation,
     useDeleteUserMutation,
+    useFormOptionsQuery,
 } = usersApi

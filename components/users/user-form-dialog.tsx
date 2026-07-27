@@ -21,6 +21,7 @@ import { getApiErrorMessage } from "@/lib/api-error"
 import {
     useCreateUserMutation,
     useUpdateUserMutation,
+    useFormOptionsQuery,
     type User,
     type UserPayload,
 } from "@/store/api/users-api"
@@ -36,7 +37,7 @@ type FormState = {
     email: string
     password: string
     password_confirmation: string
-    role: "admin" | "user"
+    role: number
     status: "active" | "inactive"
 }
 
@@ -45,7 +46,7 @@ const emptyForm: FormState = {
     email: "",
     password: "",
     password_confirmation: "",
-    role: "user",
+    role: 1,
     status: "active",
 }
 
@@ -74,7 +75,12 @@ function UserFormFields({
     const [error, setError] = useState<string | null>(null)
     const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
     const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
-    const isLoading = isCreating || isUpdating
+    const {
+        data: formOptions,
+        isLoading: isFormOptionsLoading,
+        error: formOptionsError,
+    } = useFormOptionsQuery()
+    const isLoading = isCreating || isUpdating || isFormOptionsLoading
 
     function updateField<K extends keyof FormState>(
         key: K,
@@ -212,10 +218,7 @@ function UserFormFields({
                         type="password"
                         value={form.password_confirmation}
                         onChange={(e) =>
-                            updateField(
-                                "password_confirmation",
-                                e.target.value
-                            )
+                            updateField("password_confirmation", e.target.value)
                         }
                         required={!isEditing}
                         disabled={isLoading}
@@ -228,16 +231,16 @@ function UserFormFields({
                         id="role"
                         value={form.role}
                         onChange={(e) =>
-                            updateField(
-                                "role",
-                                e.target.value as "admin" | "user"
-                            )
+                            updateField("role", e.target.value as number)
                         }
                         disabled={isLoading}
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <option value="user">Usuário</option>
-                        <option value="admin">Admin</option>
+                        {formOptions?.roles.map((role) => (
+                            <option key={role.id} value={role.id}>
+                                {role.name}
+                            </option>
+                        ))}
                     </select>
                 </Field>
                 <Field>
@@ -252,7 +255,7 @@ function UserFormFields({
                             )
                         }
                         disabled={isLoading}
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="active">Ativo</option>
                         <option value="inactive">Inativo</option>
@@ -271,11 +274,7 @@ function UserFormFields({
                     Cancelar
                 </Button>
                 <Button type="submit" disabled={isLoading}>
-                    {isLoading
-                        ? "Salvando..."
-                        : isEditing
-                          ? "Salvar"
-                          : "Criar"}
+                    {isLoading ? "Salvando..." : isEditing ? "Salvar" : "Criar"}
                 </Button>
             </DialogFooter>
         </form>
