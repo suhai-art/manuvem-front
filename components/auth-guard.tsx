@@ -13,6 +13,7 @@ import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar"
 
 const PUBLIC_PATHS = ["/login"]
@@ -25,6 +26,7 @@ function isPublicPathname(pathname: string) {
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
+    const { state } = useSidebar()
     const router = useRouter()
     const dispatch = useAppDispatch()
     const { token, user, hydrated } = useAppSelector((state) => state.auth)
@@ -107,6 +109,13 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
                             className="mr-2 data-vertical:h-4 data-vertical:self-auto"
                         />
                         <PathBreadcrumb />
+                    </div>
+                    <div className="ml-auto flex items-center px-3">
+                        <img
+                            src="/manuvem_icon.png"
+                            alt="Manuvem"
+                            className="h-8 w-auto"
+                        />
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>

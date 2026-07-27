@@ -66,7 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             router.replace("/login")
         }
     }
-    console.log("view user? " + can("user.view"))
 
     return (
         <Sidebar {...props}>
@@ -150,7 +149,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         {can("user.view") && (
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href="/settings/access">
+                                                    <Link
+                                                        href="/settings/access"
+
+                                                        onClick={() => {
+                                                            setOpenMobile(false)
+                                                        }}
+                                                    >
                                                         <Users />
                                                         Acessos
                                                     </Link>
@@ -161,7 +166,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         {can("role.view") && (
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href="/settings/roles">
+                                                    <Link
+                                                        href="/settings/roles"
+
+                                                        onClick={() => {
+                                                            setOpenMobile(false)
+                                                        }}
+                                                    >
                                                         <ShieldCheck />
                                                         Perfis
                                                     </Link>
