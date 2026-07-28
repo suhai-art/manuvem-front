@@ -174,7 +174,7 @@ export function UsersModule() {
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="secondary">
-                                            {user.roles[0]}
+                                            {user.role}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>

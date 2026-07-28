@@ -52,7 +52,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
             if (currentUser) {
                 const params = new URLSearchParams(window.location.search)
                 const redirect = getSafeRedirect(params.get("redirect"))
-                router.replace(redirect ?? "/dashboard")
+                router.replace(redirect ?? "/")
             }
             return
         }

@@ -145,7 +145,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         {/*         </Link> */}
                                         {/*     </SidebarMenuButton> */}
                                         {/* </SidebarMenuItem> */}
+                                        {can("tenant.view") && (
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link
+                                                        href="/settings/tenants"
 
+                                                        onClick={() => {
+                                                            setOpenMobile(false)
+                                                        }}
+                                                    >
+                                                        <Building2 />
+                                                        Empresas
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        )}
                                         {can("user.view") && (
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>

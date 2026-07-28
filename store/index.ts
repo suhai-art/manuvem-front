@@ -5,6 +5,7 @@ import { itemsApi } from "@/store/api/items-api"
 import { clientsApi } from "@/store/api/clients-api"
 import { usersApi } from "@/store/api/users-api"
 import { rolesApi } from "@/store/api/roles-api"
+import { tenantsApi } from "@/store/api/tenants-api"
 import authReducer from "@/store/slices/auth-slice"
 import tenantReducer from "@/store/slices/tenant-slice"
 
@@ -17,6 +18,7 @@ export const store = configureStore({
         [clientsApi.reducerPath]: clientsApi.reducer,
         [usersApi.reducerPath]: usersApi.reducer,
         [rolesApi.reducerPath]: rolesApi.reducer,
+        [tenantsApi.reducerPath]: tenantsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -24,7 +26,8 @@ export const store = configureStore({
             itemsApi.middleware,
             clientsApi.middleware,
             usersApi.middleware,
-            rolesApi.middleware
+            rolesApi.middleware,
+            tenantsApi.middleware
         ),
 })
 

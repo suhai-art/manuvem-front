@@ -96,7 +96,7 @@ function UserFormFields({
         const payload: UserPayload = {
             name: form.name.trim(),
             email: form.email.trim(),
-            role: form.role,
+            roles: [String(form.role)],
             status: form.status,
         }
 
